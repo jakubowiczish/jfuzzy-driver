@@ -6,7 +6,7 @@ import net.sourceforge.jFuzzyLogic.plot.JFuzzyChart;
 import net.sourceforge.jFuzzyLogic.rule.Variable;
 
 /*
-"C:\Users\jakub\IdeaProjects\jfuzzy-driver\src\main\resources\fuzzy_air.fcl" 2 2 2
+"C:\Users\jakub\IdeaProjects\jfuzzy-driver\src\main\resources\fuzzy_air.fcl" 150 2 10
  */
 public class FuzzyAirQuality {
 
