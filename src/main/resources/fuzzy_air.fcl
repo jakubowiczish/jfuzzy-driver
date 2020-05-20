@@ -1,0 +1,65 @@
+FUNCTION_BLOCK
+
+VAR_INPUT
+industrial_activity : REAL;
+wind_force : REAL;
+traffic : REAL;
+END_VAR
+
+VAR_OUTPUT
+air_quality : REAL;
+END_VAR
+
+FUZZIFY industrial_activity
+TERM low := (0, 1) (15, 1) (30, 0.50) (60, 0);
+TERM medium := (10, 0) (30, 0.50) (60, 1) (80, 1) (100, 0.50) (140, 0);
+TERM high := (80, 0) (100, 0.50) (140, 1) (180, 1) (250, 0.50) (330, 0);
+TERM very_high := (180, 0) (250, 0.50) (330, 1) (400, 1);
+END_FUZZIFY
+
+FUZZIFY wind_force
+TERM weak := (0, 0) (5, 0.50) (10, 1) (15, 1) (20, 0.50) (25, 0);
+TERM medium := (15, 0) (20, 0.50) (25, 1) (30, 1) (35, 0.50) (40, 0);
+TERM strong := (30, 0) (35, 0.50) (40, 1) (45, 1) (50, 0.50) (55, 0);
+TERM very_strong := (45, 0) (50, 0.50) (55, 1) (60, 1) (65, 0.50) (70, 0);
+END_FUZZIFY
+
+FUZZIFY traffic
+TERM low := (0, 1) (4, 1) (8, 1) (16, 0.66) (20, 0.33) (24, 0);
+TERM medium := (8, 0) (16, 0.33) (20, 0.66) (24, 1) (28, 0.66) (32, 0.33) (36, 0);
+TERM high := (24, 0) (28, 0.33) (32, 0.66) (36, 1) (40, 1);
+TERM very_high := (32, 0) (36, 0.33) (40, 0.66) (44, 1) (50, 1);
+END_FUZZIFY
+
+DEFUZZIFY air_quality
+TERM poor := (0, 1) (2, 1) (3, 0.50) (4, 0);
+TERM average := (3, 0.5) (4, 1) (5, 1) (6, 0.50) (7, 0);
+TERM good := (5, 0) (6, 0.50) (7, 1) (8, 1);
+METHOD : COG;
+DEFAULT := 0;
+END_DEFUZZIFY
+
+RULEBLOCK first
+AND: MIN;
+ACT: MIN;
+
+RULE 0: IF industrial_activity IS very_high THEN air_quality IS poor;
+RULE 1: IF wind_force IS very_strong THEN air_quality IS good;
+
+RULE 3: IF industrial_activity IS low AND wind_force IS weak AND traffic IS low THEN air_quality IS good;
+RULE 4: IF industrial_activity IS low AND wind_force IS medium AND traffic IS low THEN air_quality IS good;
+RULE 5: IF industrial_activity IS low AND wind_force IS strong AND traffic IS low THEN air_quality IS good;
+RULE 6: IF industrial_activity IS low AND wind_force IS very_strong AND traffic IS low THEN air_quality IS good;
+
+RULE 7: IF industrial_activity IS medium AND wind_force IS weak AND traffic IS medium THEN air_quality IS average;
+RULE 8: IF industrial_activity IS medium AND wind_force IS medium AND traffic IS medium THEN air_quality IS average;
+RULE 9: IF industrial_activity IS medium AND wind_force IS strong AND traffic IS medium THEN air_quality IS average;
+RULE 10: IF industrial_activity IS medium AND wind_force IS very_strong AND traffic IS medium THEN air_quality IS good;
+
+RULE 11: IF industrial_activity IS high AND wind_force IS medium AND traffic IS medium THEN air_quality IS poor;
+RULE 12: IF industrial_activity IS high AND wind_force IS strong AND traffic IS medium THEN air_quality IS average;
+RULE 13: IF industrial_activity IS high AND wind_force IS very_strong AND traffic IS medium THEN air_quality IS good;
+RULE 14: IF industrial_activity IS high AND wind_force IS very_strong AND traffic IS very_high THEN air_quality IS poor;
+
+END_RULEBLOCK
+END_FUNCTION_BLOCK
